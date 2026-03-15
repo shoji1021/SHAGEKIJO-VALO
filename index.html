@@ -2,108 +2,63 @@
 <html lang="ja">
 <head>
     <meta charset="UTF-8">
-    <title>簡易射撃場（Valorant）</title>
+    <title>簡易射撃場</title>
     <style>
         body { margin: 0; overflow: hidden; background-color: #1e1e1e; font-family: 'Segoe UI', sans-serif; }
-
-        /* --- クロスヘアの設定 --- */
         #crosshair-container {
             position: absolute; top: 50%; left: 50%;
             transform: translate(-50%, -50%);
             pointer-events: none; z-index: 10;
             display: flex; align-items: center; justify-content: center;
         }
-        /* ドット */
         .ch-dot { width: 4px; height: 4px; background-color: #00ff00; border-radius: 50%; }
-        /* 丸 */
         .ch-circle { width: 12px; height: 12px; border: 2px solid #00ff00; border-radius: 50%; }
-        /* 十字 */
         .ch-cross { position: relative; width: 20px; height: 20px; }
-        .ch-cross::before, .ch-cross::after {
-            content: ""; position: absolute; background-color: #00ff00;
-        }
-        .ch-cross::before { top: 9px; left: 0; width: 20px; height: 2px; } /* 横線 */
-        .ch-cross::after { top: 0; left: 9px; width: 2px; height: 20px; }  /* 縦線 */
+        .ch-cross::before, .ch-cross::after { content: ""; position: absolute; background-color: #00ff00; }
+        .ch-cross::before { top: 9px; left: 0; width: 20px; height: 2px; }
+        .ch-cross::after { top: 0; left: 9px; width: 2px; height: 20px; }
 
-        /* --- UIパネル --- */
         #ui {
-            position: absolute; top: 50%; left: 50%;
-            transform: translate(-50%, -50%);
-            color: white; background: rgba(15, 25, 35, 0.95); /* Valorant Dark Blue */
+            position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            color: white; background: rgba(15, 25, 35, 0.95);
             padding: 30px; border-radius: 4px; z-index: 30;
-            border-top: 4px solid #ff4655;
-            min-width: 300px; display: none; /* 初期は非表示 */
-            box-shadow: 0 0 20px rgba(0,0,0,0.5);
+            border-top: 4px solid #ff4655; min-width: 300px; display: none;
         }
-        #ui h2 { margin: 0 0 20px 0; font-size: 20px; text-align: center; color: #ff4655; letter-spacing: 2px; }
+        #ui h2 { margin: 0 0 20px 0; font-size: 20px; text-align: center; color: #ff4655; }
         .setting-row { margin: 15px 0; display: flex; align-items: center; justify-content: space-between; }
-        select, input[type="range"] { cursor: pointer; }
-
-        /* スコア表示 */
-        #stats {
-            position: absolute; top: 20px; left: 20px;
-            color: white; font-size: 18px; z-index: 5;
-            text-shadow: 2px 2px 2px black;
-        }
-
-        #blocker {
-            position: absolute; width: 100%; height: 100%;
-            background-color: rgba(0,0,0,0.5);
-            display: flex; justify-content: center; align-items: center;
-            z-index: 20;
-        }
+        #stats { position: absolute; top: 20px; left: 20px; color: white; font-size: 18px; z-index: 5; text-shadow: 2px 2px 2px black; }
+        #blocker { position: absolute; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5); display: flex; justify-content: center; align-items: center; z-index: 20; }
     </style>
 </head>
 <body>
 
     <div id="blocker">
-        <div style="color: white; text-align: center;">
-            <h1>READY</h1>
-            <p>CLICK TO START</p>
-        </div>
+        <div style="color: white; text-align: center;"><h1>READY</h1><p>CLICK TO START</p></div>
     </div>
-
     <div id="stats">KILLS: <span id="score">0</span></div>
-
-    <div id="crosshair-container">
-        <div id="crosshair-visual" class="ch-dot"></div>
-    </div>
+    <div id="crosshair-container"><div id="crosshair-visual" class="ch-dot"></div></div>
 
     <div id="ui">
         <h2>SETTINGS</h2>
-        
-        <div class="setting-row">
-            <label>Mouse Sensitivity</label>
+        <div class="setting-row"><label>Sensitivity</label>
             <div style="display:flex; align-items:center;">
                 <input type="range" id="sensSlider" min="0.01" max="2.00" step="0.01" value="1.00">
                 <span id="sensValue" style="margin-left:10px; width:40px;">1.00</span>
             </div>
         </div>
-
-        <div class="setting-row">
-            <label>Crosshair Type</label>
+        <div class="setting-row"><label>Crosshair</label>
             <select id="chType">
                 <option value="ch-dot">Dot</option>
                 <option value="ch-cross">Crosshair</option>
                 <option value="ch-circle">Circle</option>
             </select>
         </div>
-
-        <div class="setting-row">
-            <label>Bot Armor</label>
-            <input type="checkbox" id="armorToggle">
-        </div>
-
+        <div class="setting-row"><label>Bot Armor</label><input type="checkbox" id="armorToggle"></div>
         <button id="resumeBtn" style="width:100%; padding:10px; margin-top:10px; background:#ff4655; border:none; color:white; font-weight:bold; cursor:pointer;">RESUME</button>
     </div>
 
     <script type="importmap">
-        {
-            "imports": {
-                "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-                "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/"
-            }
-        }
+        { "imports": { "three": "https://unpkg.com/three@0.160.0/build/three.module.js", "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/" } }
     </script>
 
     <script type="module">
@@ -119,9 +74,7 @@
         renderer.setSize(window.innerWidth, window.innerHeight);
         document.body.appendChild(renderer.domElement);
 
-        const light = new THREE.HemisphereLight(0xeeeeee, 0x888888, 1);
-        scene.add(light);
-
+        scene.add(new THREE.HemisphereLight(0xeeeeee, 0x888888, 1));
         const floor = new THREE.Mesh(new THREE.PlaneGeometry(200, 200), new THREE.MeshPhongMaterial({ color: 0x999999 }));
         floor.rotation.x = - Math.PI / 2;
         scene.add(floor);
@@ -130,104 +83,105 @@
         const blocker = document.getElementById('blocker');
         const ui = document.getElementById('ui');
 
-        // --- 設定メニューの制御 ---
+        // 設定
         const sensSlider = document.getElementById('sensSlider');
         const sensValue = document.getElementById('sensValue');
-        const chTypeSelect = document.getElementById('chType');
-        const chVisual = document.getElementById('crosshair-visual');
-
         sensSlider.addEventListener('input', (e) => {
             const val = parseFloat(e.target.value);
             sensValue.innerText = val.toFixed(2);
             controls.pointerSpeed = val;
         });
-
-        chTypeSelect.addEventListener('change', (e) => {
-            chVisual.className = e.target.value;
+        document.getElementById('chType').addEventListener('change', (e) => {
+            document.getElementById('crosshair-visual').className = e.target.value;
         });
 
-        // ESCキーのトグルロジック
-        document.addEventListener('keydown', (e) => {
-            if (e.code === 'Escape') {
-                if (controls.isLocked) {
-                    // 自動でunlockされる
-                } else {
-                    controls.lock();
-                }
-            }
-        });
-
-        controls.addEventListener('lock', () => {
-            ui.style.display = 'none';
-            blocker.style.display = 'none';
-        });
-
-        controls.addEventListener('unlock', () => {
-            ui.style.display = 'block';
-            blocker.style.display = 'flex';
-        });
-
+        // ロック制御
+        document.addEventListener('keydown', (e) => { if (e.code === 'Escape') { if (!controls.isLocked) controls.lock(); } });
+        controls.addEventListener('lock', () => { ui.style.display = 'none'; blocker.style.display = 'none'; });
+        controls.addEventListener('unlock', () => { ui.style.display = 'block'; blocker.style.display = 'flex'; });
         document.getElementById('resumeBtn').addEventListener('click', () => controls.lock());
         blocker.addEventListener('click', () => controls.lock());
 
-        // --- 音声 ---
+        // 音声
         const shootSound = new Audio('Vandal Shot 1.mp3');
-        function playShootSound() {
-            const s = shootSound.cloneNode();
-            s.volume = 0.5;
-            s.play();
-        }
+        function playShootSound() { const s = shootSound.cloneNode(); s.volume = 0.5; s.play(); }
 
-        // --- ボット ---
+        // ボット
         const botGroup = new THREE.Group();
         scene.add(botGroup);
-        const uiScore = document.getElementById('score');
         const armorToggle = document.getElementById('armorToggle');
-        let score = 0;
-
         function createBot() {
             const bot = new THREE.Group();
             const body = new THREE.Mesh(new THREE.CylinderGeometry(0.3, 0.3, 1.2, 16), new THREE.MeshPhongMaterial({ color: 0xff4655 }));
-            body.position.y = 0.6; body.userData = { part: 'body' };
-            bot.add(body);
+            body.position.y = 0.6; body.userData = { part: 'body' }; bot.add(body);
             const head = new THREE.Mesh(new THREE.SphereGeometry(0.2, 16, 16), new THREE.MeshPhongMaterial({ color: 0xffffff }));
-            head.position.y = 1.4; head.userData = { part: 'head' };
-            bot.add(head);
+            head.position.y = 1.4; head.userData = { part: 'head' }; bot.add(head);
             respawnBot(bot);
             botGroup.add(bot);
         }
-
         function respawnBot(bot) {
             const angle = (Math.random() - 0.5) * Math.PI / 1.5;
             const radius = 8 + Math.random() * 10;
             bot.position.set(Math.sin(angle) * radius, 0, -Math.cos(angle) * radius);
             bot.userData.hp = armorToggle.checked ? 150 : 100;
         }
-
         for (let i = 0; i < 10; i++) createBot();
 
-        // --- 射撃 ---
+        // --- 弾道（トレーサー）生成関数 ---
+        const tracers = [];
+        function createTracer(targetPoint) {
+            // 銃口の位置（カメラの少し右下）を計算
+            const muzzlePos = new THREE.Vector3(0.2, -0.2, -0.5);
+            muzzlePos.applyQuaternion(camera.quaternion);
+            muzzlePos.add(camera.position);
+
+            const distance = muzzlePos.distanceTo(targetPoint);
+            const geometry = new THREE.CylinderGeometry(0.01, 0.01, distance, 8);
+            const material = new THREE.MeshBasicMaterial({ color: 0xffffff, transparent: true, opacity: 0.8 });
+            const tracer = new THREE.Mesh(geometry, material);
+
+            // 弾道を中間点に配置してターゲットに向ける
+            tracer.position.copy(muzzlePos).lerp(targetPoint, 0.5);
+            tracer.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), targetPoint.clone().sub(muzzlePos).normalize());
+            
+            scene.add(tracer);
+            tracers.push({ mesh: tracer, time: Date.now() });
+        }
+
+        // 射撃処理
         const raycaster = new THREE.Raycaster();
         window.addEventListener('mousedown', (e) => {
             if (!controls.isLocked || e.button !== 0) return;
             playShootSound();
+
             raycaster.setFromCamera(new THREE.Vector2(0, 0), camera);
-            const hits = raycaster.intersectObjects(botGroup.children, true);
+            const hits = raycaster.intersectObjects([floor, ...botGroup.children], true);
+            
+            // 着弾点の設定（何も当たらなかった場合は遠くの空へ）
+            let targetPoint = new THREE.Vector3();
             if (hits.length > 0) {
-                const hit = hits[0].object;
-                const bot = hit.parent;
-                bot.userData.hp -= (hit.userData.part === 'head' ? 160 : 40);
-                if (bot.userData.hp <= 0) {
-                    score++; uiScore.innerText = score;
-                    respawnBot(bot);
+                targetPoint.copy(hits[0].point);
+                const hitObj = hits[0].object;
+                if (hitObj.userData.part) {
+                    const bot = hitObj.parent;
+                    bot.userData.hp -= (hitObj.userData.part === 'head' ? 160 : 40);
+                    if (bot.userData.hp <= 0) {
+                        document.getElementById('score').innerText = ++score;
+                        respawnBot(bot);
+                    }
                 }
+            } else {
+                const dir = new THREE.Vector3(0, 0, -1).applyQuaternion(camera.quaternion);
+                targetPoint.copy(camera.position).add(dir.multiplyScalar(50));
             }
+            
+            createTracer(targetPoint); // 弾道を表示
         });
 
-        // --- 移動 ---
+        // 移動とループ
         let moveF = false, moveB = false, moveL = false, moveR = false;
         const velocity = new THREE.Vector3(), direction = new THREE.Vector3();
-        let prevTime = performance.now();
+        let prevTime = performance.now(), score = 0;
 
         document.addEventListener('keydown', (e) => {
             if (e.code === 'KeyW') moveF = true; if (e.code === 'KeyS') moveB = true;
@@ -253,6 +207,16 @@
                 controls.moveRight(-velocity.x * delta);
                 controls.moveForward(-velocity.z * delta);
             }
+
+            // 弾道の寿命管理（0.1秒で削除）
+            const now = Date.now();
+            for (let i = tracers.length - 1; i >= 0; i--) {
+                if (now - tracers[i].time > 100) {
+                    scene.remove(tracers[i].mesh);
+                    tracers.splice(i, 1);
+                }
+            }
+
             prevTime = time;
             renderer.render(scene, camera);
         }
