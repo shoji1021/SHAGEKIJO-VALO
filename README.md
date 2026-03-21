@@ -1,4 +1,4 @@
-# SHAGEKIJO-VALO
+# SHAGEKIJO
 
 VALORANTの射撃場（The Range）をブラウザ上で再現した練習ツールです。
 Three.jsを使用し、FPS視点でのエイム練習をブラウザで完結させることを目的としています。
